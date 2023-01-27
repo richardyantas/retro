@@ -2,6 +2,7 @@ pipeline {
     agent any
     options {disableConcurrentBuilds()}
     environment {
+        GOOGLE_PROJECT = "tenpo"
         GOOGLE_PROJECT_ID = "jovial-atlas-375801" 
         GOOGLE_PROJECT_NAME = "tenpo"
         GOOGLE_APPLICATION_CREDENTIALS = credentials('sc_jenkins_terraform_test2')
@@ -25,12 +26,12 @@ pipeline {
             steps {
                 cleanWs()
                     checkout([$class: 'GitSCM', 
-                    branches: [[name: '*/develop']], 
+                    branches: [[name: '*/main']], 
                     doGenerateSubmoduleConfigurations: false, 
                     extensions: [[$class: 'CleanCheckout']], 
                     submoduleCfg: [], 
                     userRemoteConfigs: [
-                        [url: 'https://github.com/richardyantas/camp.git', credentialsId: '']
+                        [url: 'https://github.com/richardyantas/tenpo.git', credentialsId: '']
                         ]])
                 sh 'pwd' 
                 sh 'ls -l'
@@ -39,18 +40,14 @@ pipeline {
     
         stage('Terraform init----') {
          steps {
-            sh 'terraform --version'
-            sh ' cd bastion && ls -la'
-            sh ' cd bastion && gcloud projects list'
-            sh ' cd bastion && terraform init '
+            sh 'terraform --version'            
+            sh 'terraform init '
             } //steps
         }  //stage
 
         stage('Terraform plan----') {
-            steps {
-               sh 'cd bastion && ls -la'
-               sh 'cd bastion && gcloud projects list'
-               sh 'cd bastion && terraform plan  -refresh=true -lock=false'
+            steps {               
+               sh 'terraform plan  -refresh=true -lock=false'
             } //steps
         }  //stage
         
@@ -68,10 +65,10 @@ pipeline {
             script{  
                 if (params.ACCION == "destroy"){
                          sh ' echo "llego" + params.ACCION'   
-                         sh 'cd bastion && terraform destroy -auto-approve'
+                         sh 'terraform destroy -auto-approve'
                 } else {
                          sh ' echo  "llego" + params.ACCION'                 
-                         sh 'cd bastion && terraform apply -refresh=true  -auto-approve'  
+                         sh 'terraform apply -refresh=true  -auto-approve'  
                 }  // if
 
             }
@@ -79,9 +76,9 @@ pipeline {
         }  //stage
 
 
-        stage('Deploy') {
-            // Connect to the VM and clone repository and run app.py
-        }
+        // stage('Deploy') {
+        //     // Connect to the VM and clone repository and run app.py
+        // }
 
    }  // stages
 } //pipeline

@@ -1,3 +1,7 @@
+provider "google" {
+  project     = "jovial-atlas-375801"
+  # region      = 
+}
 
 # [START compute_flask_quickstart_vpc]
 resource "google_compute_network" "vpc_network" {
@@ -80,6 +84,7 @@ resource "random_id" "bucket_prefix" {
 
 resource "google_storage_bucket" "default" {
   name          = "${random_id.bucket_prefix.hex}-bucket-tfstate"
+  # name = "sc_jenkins_terraform_tes2"
   force_destroy = false
   location      = "US"
   storage_class = "STANDARD"
