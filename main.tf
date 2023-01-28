@@ -1,6 +1,5 @@
 provider "google" {
   project     = "jovial-atlas-375801"
-  # region      = 
 }
 
 # [START compute_flask_quickstart_vpc]
@@ -33,8 +32,8 @@ resource "google_compute_instance" "default" {
   }
 
   # Install Flask (maybe add git clone repo later :))
-  metadata_startup_script = "sudo apt-get update; sudo apt-get install -yq build-essential python3-pip rsync; pip install flask"
-
+  # metadata_startup_script = "sudo apt-get update; sudo apt-get install -yq build-essential python3-pip rsync; pip install flask"
+  metadata_startup_script = "bootstrap.sh"
   network_interface {
     subnetwork = google_compute_subnetwork.default.id
 
@@ -61,7 +60,7 @@ resource "google_compute_firewall" "ssh" {
 # [END vpc_flask_quickstart_ssh_fw]
 
 
-# [START vpc_flask_quickstart_5000_fw]
+# [START vpc_flask_quickstart_5000_fw]    -> esto es equivalente a sudo ufw allow 5000
 resource "google_compute_firewall" "flask" {
   name    = "flask-app-firewall"
   network = google_compute_network.vpc_network.id

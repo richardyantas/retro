@@ -1,8 +1,7 @@
 pipeline {
     agent any
     options {disableConcurrentBuilds()}
-    environment {
-        GOOGLE_PROJECT = "tenpo"
+    environment {        
         GOOGLE_PROJECT_ID = "jovial-atlas-375801" 
         GOOGLE_PROJECT_NAME = "tenpo"
         GOOGLE_APPLICATION_CREDENTIALS = credentials('sc_jenkins_terraform_test2')
@@ -10,7 +9,7 @@ pipeline {
     }
     parameters { 
       choice(name: 'ENTORNOS', choices: ['dev', 'pre', 'pro'], description: 'Seleccione el entorno a utilizar')
-      choice(name: 'ACCION', choices: ['', 'plan-apply', 'destroy'], description: 'Seleccione el entorno a utilizar')
+      choice(name: 'ACCION', choices: ['', 'plan-apply', 'destroy', 'test', 'build', 'deploy'], description: 'Seleccione el entorno a utilizar')
     }
     stages{
         
@@ -76,9 +75,27 @@ pipeline {
         }  //stage
 
 
-        // stage('Deploy') {
+        // stage('Test') {
         //     // Connect to the VM and clone repository and run app.py
+        //     if (params.ACCION != "test"){
+        //         sh 'python3 -m pytest'
+
+        //     }
         // }
 
+        // stage('Build') {
+        //     // Connect to the VM and clone repository and run app.py
+        //     if (params.ACCION != "build"){
+        //         sh 'git clone https://github.com/richardyantas/tenpo.git '
+        //     }
+        // }
+
+        // stage('Deploy') {
+        //     // Connect to the VM and clone repository and run app.py
+        //     if (params.ACCION != "deploy"){
+        //         sh ' echo "deploying'
+
+        //     }
+        // }
    }  // stages
 } //pipeline
