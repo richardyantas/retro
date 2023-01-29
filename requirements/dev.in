@@ -1,0 +1,5 @@
+jupyterlab
+pylint
+pytest
+pandas
+autopep8
