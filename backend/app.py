@@ -1,9 +1,15 @@
 from flask import Flask, request, jsonify
-from inference import predict
+from backend.predictor import predict
 
 # curl -XPOST -d @./data.json -H "Content-Type:application/json" http://127.0.0.1:5000
 
 app = Flask(__name__)
+
+@app.route("/")
+def index():    
+    return "Recommender system!"
+
+# @app.route("/predict", methods=['POST'])
 
 @app.route("/", methods=['POST'])
 def hello():
@@ -11,7 +17,10 @@ def hello():
 	# if request.method == 'POST':
 	# 	print("POST'd details::", request.json["details"])	
 	res = predict(data['details'])
-	return jsonify(str(res))
+	return {
+		"vec": res
+	}
+	# return jsonify(str(res))
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

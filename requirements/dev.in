@@ -1,5 +1,4 @@
-jupyterlab
+-c prod.txt
 pylint
 pytest
-pandas
 autopep8

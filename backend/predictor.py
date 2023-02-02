@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 def predict(data):
     # Example or inference. This model returns a 1-dim tensor multiplied by 2
@@ -6,4 +7,4 @@ def predict(data):
     sample_tensor = torch.tensor(data)
     result = ts(sample_tensor)
     # print(result)  # <- tensor([2, 4, 6, 8]) 
-    return result
+    return result.tolist()
