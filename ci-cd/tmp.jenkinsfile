@@ -1,0 +1,91 @@
+pipeline {
+    agent any
+    options {disableConcurrentBuilds()}
+    environment {        
+        GOOGLE_PROJECT_ID = "retro-376614" 
+        GOOGLE_PROJECT_NAME = "retro"
+        GOOGLE_APPLICATION_CREDENTIALS = credentials('retro')
+        GOOGLE_CLOUD_KEYFILE_JSON = credentials('retro')
+    }
+    parameters { 
+      choice(name: 'ENTORNOS', choices: ['dev', 'pre', 'pro'], description: 'Seleccione el entorno a utilizar')
+      choice(name: 'ACCION', choices: ['','destroy', 'build', 'deploy'], description: 'Seleccione el entorno a utilizar')
+    }
+    stages{        
+        stage('clean workspaces -----------') { 
+            steps {
+              cleanWs()
+              sh 'env'
+            } //steps
+        }  //stage
+
+        //${params.Acción}
+        stage("git clone code"){
+            steps {
+                cleanWs()
+                    checkout([$class: 'GitSCM', 
+                    branches: [[name: '*/main']], 
+                    doGenerateSubmoduleConfigurations: false, 
+                    extensions: [[$class: 'CleanCheckout']], 
+                    submoduleCfg: [], 
+                    userRemoteConfigs: [
+                        [url: 'https://github.com/richardyantas/retro.git', credentialsId: '']
+                        ]])
+                sh 'pwd' 
+                sh 'ls -l'
+            } //steps
+        }  //stage
+
+        stage('Build') {
+            steps {
+                script{
+                    if (params.ACCION == "build"){
+                        // local instalation for testing
+                        // sh 'pip install -r requirements/prod.txt'
+                        // remote infrastructure creation
+                            // terraform init
+                        sh 'terraform --version'            
+                        sh 'terraform init '
+                            // terraform plan
+                        sh 'terraform plan  -refresh=true -lock=false'
+                        // def userInput = input(id: 'confirm', message: params.ACCION + '?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
+                            // terraform apply
+                        sh ' echo  "llego" + params.ACCION'                 
+                        sh 'terraform apply -refresh=true  -auto-approve'  
+                    }
+                    if (params.ACCION == "destroy"){
+                        sh ' echo "llego" + params.ACCION'   
+                        sh 'terraform destroy -auto-approve'   
+                    }
+                }                                
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Connect to the VM and clone repository and run app.py                
+                sh 'python3 -m pytest' 
+            }
+        }                        
+
+        stage('Deploy') {            
+            steps {                
+                script{
+                    // sh 'gcloud compute ssh --project="retro-376614" --zone=ZONE flask-ml'
+                    // Connect to the VM with name "flask-vm" from project "jovial-atlas-375801"                    
+                    if (params.ACCION == "deploy"){        
+                        // gcloud status project                        
+                        sh ''' gcloud compute instances add-metadata flask-ml --metadata=startup-script='#!/bin/bash
+                            cd tenpo/
+                            git pull https://github.com/richardyantas/tenpo.git 
+                            docker stop mlops
+                            docker rm mlops 
+                            docker build -t mlops:latest .
+                            docker run -d -p 5000:5000 mlops' '''
+                        sh ' echo "deploying'
+                    }
+                }
+            }            
+        }
+   }  // stages
+} //pipeline
