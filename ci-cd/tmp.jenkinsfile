@@ -45,17 +45,17 @@ pipeline {
                         // remote infrastructure creation
                             // terraform init
                         sh 'terraform --version'            
-                        sh 'terraform init '
+                        sh 'cd ci-cd && terraform init '
                             // terraform plan
-                        sh 'terraform plan  -refresh=true -lock=false'
+                        sh 'cd ci-cd && terraform plan  -refresh=true -lock=false'
                         // def userInput = input(id: 'confirm', message: params.ACCION + '?', parameters: [ [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Apply terraform', name: 'confirm'] ])
                             // terraform apply
                         sh ' echo  "llego" + params.ACCION'                 
-                        sh 'terraform apply -refresh=true  -auto-approve'  
+                        sh 'cd ci-cd && terraform apply -refresh=true  -auto-approve'  
                     }
                     if (params.ACCION == "destroy"){
                         sh ' echo "llego" + params.ACCION'   
-                        sh 'terraform destroy -auto-approve'   
+                        sh 'cd ci-cd && terraform destroy -auto-approve'   
                     }
                 }                                
             }
