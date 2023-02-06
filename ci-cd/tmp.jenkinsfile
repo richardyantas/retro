@@ -75,17 +75,19 @@ pipeline {
                     // Connect to the VM with name "flask-vm" from project "jovial-atlas-375801"                    
                     if (params.ACCION == "deploy"){        
                         // gcloud status project                        
-                        sh ''' gcloud compute instances add-metadata flask-ml --metadata=startup-script='#!/bin/bash
-                            cd tenpo/
-                            git pull https://github.com/richardyantas/tenpo.git 
-                            docker stop mlops
-                            docker rm mlops 
-                            docker build -t mlops:latest .
-                            docker run -d -p 5000:5000 mlops' '''
+                        // sh ''' gcloud compute instances add-metadata flask-ml --metadata=startup-script='#!/bin/bash
+                        //     cd tenpo/
+                        //     git pull https://github.com/richardyantas/retro.git 
+                        //     docker stop mlops
+                        //     docker rm mlops 
+                        //     docker build -t mlops:latest .
+                        //     docker run -d -p 5000:5000 mlops' '''
                         sh ' echo "deploying'
                     }
                 }
             }            
         }
-   }  // stages
-} //pipeline
+
+    }
+}
+

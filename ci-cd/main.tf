@@ -34,7 +34,7 @@ resource "google_compute_instance" "default" {
 
   # Install Flask (maybe add git clone repo later :))
   # metadata_startup_script = "sudo apt-get update; sudo apt-get install -yq build-essential python3-pip rsync; pip install flask"
-  metadata_startup_script = "bootstrap.sh"
+  metadata_startup_script = "./ci-cd/bootstrap.sh"
   network_interface {
     subnetwork = google_compute_subnetwork.default.id
 
